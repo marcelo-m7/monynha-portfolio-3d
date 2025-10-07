@@ -100,7 +100,7 @@ export default function SeriesDetail() {
           initial={prefersReducedMotion ? undefined : { opacity: 0, y: 24 }}
           animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="rounded-3xl border border-border/60 bg-card/70 p-10 shadow-[0_45px_85px_-70px_rgba(124,58,237,0.75)] backdrop-blur-xl"
+          className="rounded-3xl border border-border/60 bg-card/70 p-10 shadow-[0_45px_85px_-70px_hsl(var(--primary)/0.75)] backdrop-blur-xl"
         >
           <Button
             asChild
