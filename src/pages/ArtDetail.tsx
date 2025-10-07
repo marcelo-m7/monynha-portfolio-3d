@@ -16,7 +16,12 @@ import {
   useCurrentLanguage,
 } from '@/hooks/useCurrentLanguage';
 
-const Art3DPreview = lazy(() => import('@/components/Art3DPreview'));
+const isArtPreview3DEnabled =
+  import.meta.env.VITE_ENABLE_ART_3D?.toLowerCase() === 'true';
+
+const Art3DPreviewLazy = isArtPreview3DEnabled
+  ? lazy(() => import('@/components/Art3DPreview'))
+  : null;
 
 export default function ArtDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -27,6 +32,8 @@ export default function ArtDetail() {
   const [isMediaOpen, setIsMediaOpen] = useState(false);
   const [activeMedia, setActiveMedia] = useState<string | null>(null);
   const [is3DOpen, setIs3DOpen] = useState(false);
+
+  const canRender3DPreview = Boolean(artwork?.url3d && Art3DPreviewLazy);
 
   const handleOpenMedia = (media: string) => {
     setActiveMedia(media);
@@ -56,7 +63,7 @@ export default function ArtDetail() {
           initial={prefersReducedMotion ? undefined : { opacity: 0, y: 24 }}
           animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="rounded-3xl border border-border/60 bg-card/70 p-10 shadow-[0_45px_90px_-70px_rgba(124,58,237,0.8)] backdrop-blur-xl"
+          className="rounded-3xl border border-border/60 bg-card/70 p-10 shadow-[0_45px_90px_-70px_hsl(var(--primary)/0.8)] backdrop-blur-xl"
         >
           <Button
             asChild
@@ -122,9 +129,10 @@ export default function ArtDetail() {
                 type="button"
                 onClick={() => setIs3DOpen(true)}
                 className="inline-flex items-center gap-2 rounded-full"
+                disabled={!canRender3DPreview}
               >
                 <Orbit className="h-4 w-4" aria-hidden />
-                Explorar experiência 3D
+                {canRender3DPreview ? 'Explorar experiência 3D' : 'Pré-visualização indisponível'}
               </Button>
               <a
                 href={artwork.url3d}
@@ -135,6 +143,11 @@ export default function ArtDetail() {
                 Abrir em nova aba
                 <ExternalLink className="h-4 w-4" aria-hidden />
               </a>
+              {!canRender3DPreview && (
+                <p className="text-sm text-muted-foreground/80">
+                  A visualização interativa está desativada nesta build. Defina VITE_ENABLE_ART_3D="true" para ativar.
+                </p>
+              )}
             </div>
           )}
         </motion.div>
@@ -152,6 +165,7 @@ export default function ArtDetail() {
               alt={`${artwork.title} em detalhe`}
               className="h-auto w-full rounded-2xl"
               loading="lazy"
+              decoding="async"
             />
           )}
         </DialogContent>
@@ -167,24 +181,33 @@ export default function ArtDetail() {
               </DialogDescription>
             </DialogHeader>
             <div className="h-[420px] w-full overflow-hidden rounded-2xl bg-background/80">
-              <Suspense
-                fallback={
-                  <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                    Carregando visualização 3D…
-                  </div>
-                }
-              >
-                {prefersReducedMotion ? (
-                  <div className="flex h-full flex-col items-center justify-center gap-4 text-muted-foreground">
-                    <Orbit className="h-6 w-6" aria-hidden />
-                    <p className="max-w-sm text-center text-sm">
-                      A visualização 3D está desativada porque a preferência do sistema indica movimento reduzido.
-                    </p>
-                  </div>
-                ) : (
-                  <Art3DPreview />
-                )}
-              </Suspense>
+              {canRender3DPreview ? (
+                <Suspense
+                  fallback={
+                    <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                      Carregando visualização 3D…
+                    </div>
+                  }
+                >
+                  {prefersReducedMotion ? (
+                    <div className="flex h-full flex-col items-center justify-center gap-4 text-muted-foreground">
+                      <Orbit className="h-6 w-6" aria-hidden />
+                      <p className="max-w-sm text-center text-sm">
+                        A visualização 3D está desativada porque a preferência do sistema indica movimento reduzido.
+                      </p>
+                    </div>
+                  ) : (
+                    Art3DPreviewLazy && <Art3DPreviewLazy />
+                  )}
+                </Suspense>
+              ) : (
+                <div className="flex h-full flex-col items-center justify-center gap-4 text-muted-foreground">
+                  <Orbit className="h-6 w-6" aria-hidden />
+                  <p className="max-w-sm text-center text-sm">
+                    Esta build foi gerada sem os assets 3D locais. Abra o link externo para visualizar a cena.
+                  </p>
+                </div>
+              )}
             </div>
           </DialogContent>
         </Dialog>

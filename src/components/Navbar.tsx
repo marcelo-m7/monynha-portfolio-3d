@@ -86,7 +86,7 @@ export default function Navbar() {
           to="/"
           className="flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary font-display text-base text-white shadow-[0_0_12px_rgba(56,189,248,0.45)]">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary font-display text-base text-white shadow-[0_0_12px_hsl(var(--secondary)/0.45)]">
             M
           </span>
           <span className="hidden sm:inline-flex bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
@@ -112,7 +112,7 @@ export default function Navbar() {
                         whileHover: {
                           y: -2,
                           boxShadow:
-                            '0 12px 24px -18px rgba(56,189,248,0.6), 0 0 12px rgba(124,58,237,0.45)',
+                            '0 12px 24px -18px hsl(var(--secondary)/0.6), 0 0 12px hsl(var(--primary)/0.45)',
                         },
                         whileTap: { scale: 0.98 },
                       }
