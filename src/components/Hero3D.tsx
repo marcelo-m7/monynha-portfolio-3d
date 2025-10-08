@@ -45,6 +45,48 @@ export default function Hero3D() {
     return <StaticIllustration />;
   }
 
+  if (shouldUseGridDistortion) {
+    return (
+      <Suspense fallback={<StaticIllustration />}>
+        <div className="pointer-events-none fixed inset-0 -z-20">
+          <GridDistortionBackground
+            grid={18}
+            mouse={0.12}
+            strength={0.18}
+            relaxation={0.88}
+            imageSrc="/images/artleo-hero.svg"
+          />
+        </div>
+      </Suspense>
+    );
+  }
+
+  if (shouldUseFaultyTerminal) {
+    return (
+      <Suspense fallback={<StaticIllustration />}>
+        <div className="pointer-events-none fixed inset-0 -z-20">
+          <FaultyTerminalBackground
+            scale={1.5}
+            gridMul={[2, 1]}
+            digitSize={1.2}
+            timeScale={1}
+            scanlineIntensity={1}
+            glitchAmount={1}
+            flickerAmount={0.9}
+            noiseAmp={1}
+            chromaticAberration={0.0015}
+            dither={0.6}
+            curvature={0.08}
+            tint="#a5f3fc"
+            mouseStrength={0.25}
+            pageLoadAnimation
+            brightness={1.05}
+          />
+        </div>
+      </Suspense>
+    );
+  }
+
   return (
     <Suspense fallback={<StaticIllustration />}>
       {HeroCanvas ? <HeroCanvas /> : <StaticIllustration />}
